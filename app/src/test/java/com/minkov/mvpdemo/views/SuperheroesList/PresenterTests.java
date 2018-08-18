@@ -4,7 +4,6 @@ import com.minkov.mvpdemo.models.Superhero;
 import com.minkov.mvpdemo.repositories.base.Repository;
 import com.minkov.mvpdemo.testutils.SuperheroesGenerator;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
@@ -13,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static junit.framework.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class PresenterTests {
@@ -86,11 +85,11 @@ public class PresenterTests {
 
 
     @Test
-    public void presenterApplyFilter_shouldCallViewShowLoadingThenHideLoading() {
+    public void presenterApplyFilter_shouldCallViewShowLoadingThenHideLoadingTwice() {
         mPresenter.subscribe(mView);
-        mPresenter.applyFilter("fIlTeR");
+        mPresenter.applyFilter("filter");
 
-        verify(mView).showLoading();
-        verify(mView).hideLoading();
+        verify(mView, times(2)).showLoading();
+        verify(mView, times(2)).hideLoading();
     }
 }
