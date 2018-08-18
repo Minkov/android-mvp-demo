@@ -83,7 +83,6 @@ public class PresenterTests {
         verify(mView).hideLoading();
     }
 
-
     @Test
     public void presenterApplyFilter_shouldCallViewShowLoadingThenHideLoadingTwice() {
         mPresenter.subscribe(mView);

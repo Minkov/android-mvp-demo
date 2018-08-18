@@ -17,7 +17,7 @@ public class SuperheroesListPresenter implements SuperheroesListContracts.Presen
 
     @Override
     public void onSuperheroSelected(Superhero superhero) {
-        mView.showSuperhero(superhero);
+        mView.showDetails(superhero);
     }
 
     @Override

@@ -10,20 +10,29 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.minkov.mvpdemo.R;
 import com.minkov.mvpdemo.models.Superhero;
+import com.minkov.mvpdemo.uiutils.DetailsNavigator;
+import com.minkov.mvpdemo.views.extensions.TextWatcherExtensions;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
 public class SuperheroesListView extends Fragment implements
-        SuperheroesListContracts.View, AdapterView.OnItemClickListener, TextWatcher {
+        SuperheroesListContracts.View, AdapterView.OnItemClickListener, TextWatcherExtensions {
 
     private SuperheroesListContracts.Presenter mPresenter;
     private ListView mSuperheroesListView;
     private SuperheroesListViewAdapter mSuperheroesAdapter;
     private EditText mFilterEditText;
+    private ProgressBar mLoadingView;
+    private DetailsNavigator<Superhero> mDetailsNavigator;
+    private TextView mSuperheroesEmptyView;
 
     public SuperheroesListView() {
         // Required empty public constructor
@@ -43,9 +52,12 @@ public class SuperheroesListView extends Fragment implements
         mSuperheroesListView.setAdapter(mSuperheroesAdapter);
         mSuperheroesListView.setOnItemClickListener(this);
 
+
         mFilterEditText = view.findViewById(R.id.et_filter);
         mFilterEditText.addTextChangedListener(this);
 
+        mLoadingView = view.findViewById(R.id.pb_loading);
+        mSuperheroesEmptyView = view.findViewById(R.id.tv_nosuperheroes);
         return view;
     }
 
@@ -70,26 +82,30 @@ public class SuperheroesListView extends Fragment implements
         mSuperheroesAdapter.clear();
         mSuperheroesAdapter.addAll(superheroes);
         mSuperheroesAdapter.notifyDataSetChanged();
+
+        mSuperheroesListView.setVisibility(View.VISIBLE);
+        mSuperheroesEmptyView.setVisibility(View.GONE);
     }
 
     @Override
     public void showLoading() {
-
+        mLoadingView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-
+        mLoadingView.setVisibility(View.GONE);
     }
 
     @Override
-    public void showSuperhero(Superhero superhero) {
-        Toast.makeText(getContext(), "HIT!", Toast.LENGTH_SHORT).show();
+    public void showDetails(Superhero superhero) {
+        mDetailsNavigator.navigateWith(superhero);
     }
 
     @Override
     public void showEmptySuperheroes() {
-
+        mSuperheroesListView.setVisibility(View.GONE);
+        mSuperheroesEmptyView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -104,18 +120,12 @@ public class SuperheroesListView extends Fragment implements
     }
 
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String pattern = mFilterEditText.getText().toString();
         mPresenter.applyFilter(pattern);
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
-
+    public void setNavigator(DetailsNavigator<Superhero> detailsNavigator) {
+        mDetailsNavigator = detailsNavigator;
     }
 }
