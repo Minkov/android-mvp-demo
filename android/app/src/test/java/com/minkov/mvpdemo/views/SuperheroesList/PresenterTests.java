@@ -2,24 +2,32 @@ package com.minkov.mvpdemo.views.SuperheroesList;
 
 import com.minkov.mvpdemo.models.Superhero;
 import com.minkov.mvpdemo.repositories.base.Repository;
+import com.minkov.mvpdemo.repositories.base.RxRepository;
+import com.minkov.mvpdemo.schedulers.ImmediateSchedulersFactory;
 import com.minkov.mvpdemo.testutils.SuperheroesGenerator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import io.reactivex.Flowable;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PresenterTests {
-    private Repository<Superhero> mockRepository = mock(Repository.class);
+    private RxRepository<Superhero> mockRepository = mock(RxRepository.class);
     private SuperheroesListPresenter mPresenter;
 
     private List<Superhero> mSuperheroes;
@@ -29,17 +37,25 @@ public class PresenterTests {
     public void setupTest() {
         mSuperheroes = new ArrayList<>();
 
-        doAnswer((Answer<Void>) invocation -> {
-            Consumer<List<Superhero>> callback = invocation.getArgument(0);
-            callback.accept(mSuperheroes);
-
-            return null;
-        }).when(mockRepository)
-            .getAll(any(Consumer.class));
+//        doAnswer((Answer<Void>) invocation -> {
+//            Consumer<List<Superhero>> callback = invocation.getArgument(0);
+//            callback.accept(mSuperheroes);
+//
+//            return null;
+//        }).when(mockRepository)
+//                .getAll(any(Consumer.class));
+        doAnswer(new Answer<Flowable<List<Superhero>>>() {
+            @Override
+            public Flowable<List<Superhero>> answer(InvocationOnMock invocation) throws Throwable {
+                return Flowable.just(mSuperheroes);
+            }
+        })
+                .when(mockRepository)
+                .getAll();
 
         mView = mock(SuperheroesListContracts.View.class);
 
-        mPresenter = new SuperheroesListPresenter(mockRepository);
+        mPresenter = new SuperheroesListPresenter(mockRepository, ImmediateSchedulersFactory.instance());
     }
 
     @Test

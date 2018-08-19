@@ -1,37 +1,27 @@
-package com.minkov.mvpdemo.views.SuperheroesList;
+package com.minkov.mvpservicesdemofirebase.views.SuperheroesList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.minkov.mvpdemo.R;
-import com.minkov.mvpdemo.models.Superhero;
-import com.minkov.mvpdemo.uiutils.DetailsNavigator;
-import com.minkov.mvpdemo.views.extensions.TextWatcherExtensions;
-
-import org.w3c.dom.Text;
+import com.minkov.mvpservicesdemofirebase.R;
+import com.minkov.mvpservicesdemofirebase.models.Superhero;
 
 import java.util.List;
 
 public class SuperheroesListView extends Fragment implements
-        SuperheroesListContracts.View, AdapterView.OnItemClickListener, TextWatcherExtensions {
+        SuperheroesListContracts.View, AdapterView.OnItemClickListener {
 
     private SuperheroesListContracts.Presenter mPresenter;
     private ListView mSuperheroesListView;
     private SuperheroesListViewAdapter mSuperheroesAdapter;
-    private EditText mFilterEditText;
     private ProgressBar mLoadingView;
-    private DetailsNavigator<Superhero> mDetailsNavigator;
     private TextView mSuperheroesEmptyView;
 
     public SuperheroesListView() {
@@ -47,14 +37,11 @@ public class SuperheroesListView extends Fragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_superheroes_list_view, container, false);
 
-        mSuperheroesListView = view.findViewById(R.id.lv_superheroes);
         mSuperheroesAdapter = new SuperheroesListViewAdapter(getContext());
+
+        mSuperheroesListView = view.findViewById(R.id.lv_superheroes);
         mSuperheroesListView.setAdapter(mSuperheroesAdapter);
         mSuperheroesListView.setOnItemClickListener(this);
-
-
-        mFilterEditText = view.findViewById(R.id.et_filter);
-        mFilterEditText.addTextChangedListener(this);
 
         mLoadingView = view.findViewById(R.id.pb_loading);
         mSuperheroesEmptyView = view.findViewById(R.id.tv_nosuperheroes);
@@ -97,11 +84,6 @@ public class SuperheroesListView extends Fragment implements
     }
 
     @Override
-    public void showDetails(Superhero superhero) {
-        mDetailsNavigator.navigateWith(superhero);
-    }
-
-    @Override
     public void showEmptySuperheroes() {
         mSuperheroesListView.setVisibility(View.GONE);
         mSuperheroesEmptyView.setVisibility(View.VISIBLE);
@@ -115,16 +97,5 @@ public class SuperheroesListView extends Fragment implements
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Superhero superhero = mSuperheroesAdapter.getItem(position);
-        mPresenter.onSuperheroSelected(superhero);
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        String pattern = mFilterEditText.getText().toString();
-        mPresenter.applyFilter(pattern);
-    }
-
-    public void setNavigator(DetailsNavigator<Superhero> detailsNavigator) {
-        mDetailsNavigator = detailsNavigator;
     }
 }

@@ -9,8 +9,9 @@ import com.minkov.mvpdemo.SuperheroesApplication;
 import com.minkov.mvpdemo.http.OkHttpRequester;
 import com.minkov.mvpdemo.http.base.HttpRequester;
 import com.minkov.mvpdemo.models.Superhero;
-import com.minkov.mvpdemo.repositories.HttpRepository;
-import com.minkov.mvpdemo.repositories.base.Repository;
+import com.minkov.mvpdemo.repositories.HttpRxRepository;
+import com.minkov.mvpdemo.repositories.base.RxRepository;
+import com.minkov.mvpdemo.schedulers.AsyncSchedulersFactory;
 import com.minkov.mvpdemo.uiutils.DetailsNavigator;
 import com.minkov.mvpdemo.utils.GsonJsonParser;
 import com.minkov.mvpdemo.utils.base.JsonParser;
@@ -19,7 +20,7 @@ public class SuperheroesListActivity extends AppCompatActivity implements Detail
 
     private SuperheroesListView mSuperheroesView;
     private SuperheroesListContracts.Presenter mSuperheroesPresenter;
-    private Repository<Superhero> mSuperheroesRepository;
+    private RxRepository<Superhero> mSuperheroesRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +31,13 @@ public class SuperheroesListActivity extends AppCompatActivity implements Detail
         String serverUrl = SuperheroesApplication.geServerUrl();
         HttpRequester httpRequester = new OkHttpRequester();
         JsonParser<Superhero> superheroJsonParser = new GsonJsonParser<>(Superhero.class, Superhero[].class);
-        mSuperheroesRepository = new HttpRepository<>(
+        mSuperheroesRepository = new HttpRxRepository<>(
                 serverUrl + "/superheroes",
                 httpRequester,
                 superheroJsonParser
         );
 
-        mSuperheroesPresenter = new SuperheroesListPresenter(mSuperheroesRepository);
+        mSuperheroesPresenter = new SuperheroesListPresenter(mSuperheroesRepository, AsyncSchedulersFactory.instance());
         mSuperheroesView = SuperheroesListView.newInstance();
         mSuperheroesView.setPresenter(mSuperheroesPresenter);
         mSuperheroesView.setNavigator(this);

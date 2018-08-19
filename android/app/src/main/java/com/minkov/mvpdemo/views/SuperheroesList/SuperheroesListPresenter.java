@@ -1,18 +1,23 @@
 package com.minkov.mvpdemo.views.SuperheroesList;
 
 import com.minkov.mvpdemo.models.Superhero;
-import com.minkov.mvpdemo.repositories.base.Repository;
+import com.minkov.mvpdemo.repositories.base.RxRepository;
+import com.minkov.mvpdemo.schedulers.base.SchedulersFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.reactivex.disposables.Disposable;
+
 public class SuperheroesListPresenter implements SuperheroesListContracts.Presenter {
 
-    private final Repository<Superhero> mSuperheroesRepository;
+    private final RxRepository<Superhero> mSuperheroesRepository;
+    private final SchedulersFactory mSchedulersFactory;
     private SuperheroesListContracts.View mView;
 
-    public SuperheroesListPresenter(Repository<Superhero> superheroesRepository) {
+    public SuperheroesListPresenter(RxRepository<Superhero> superheroesRepository, SchedulersFactory schedulersFactory) {
         mSuperheroesRepository = superheroesRepository;
+        mSchedulersFactory = schedulersFactory;
     }
 
     @Override
@@ -23,14 +28,16 @@ public class SuperheroesListPresenter implements SuperheroesListContracts.Presen
     @Override
     public void applyFilter(String pattern) {
         mView.showLoading();
-        pattern = pattern.toLowerCase();
-        String finalPattern = pattern;
-        mSuperheroesRepository.getAll(superheroes -> {
-            List<Superhero> filteredSuperheroes = superheroes.stream()
-                .filter(superhero -> superhero.getName().toLowerCase().contains(finalPattern))
-                .collect(Collectors.toList());
-            presentSuperheroesToView(filteredSuperheroes);
-        });
+        String finalPattern = pattern.toLowerCase();
+
+        Disposable disposable = mSuperheroesRepository.getAll()
+                .subscribeOn(mSchedulersFactory.background())
+                .observeOn(mSchedulersFactory.ui())
+                .map(superheroes -> superheroes.stream()
+                        .filter(superhero -> superhero.getName().toLowerCase().contains(finalPattern))
+                        .collect(Collectors.toList())
+                )
+                .subscribe(this::presentSuperheroesToView);
     }
 
     @Override
@@ -46,7 +53,10 @@ public class SuperheroesListPresenter implements SuperheroesListContracts.Presen
 
     private void loadSuperheroes() {
         mView.showLoading();
-        mSuperheroesRepository.getAll(this::presentSuperheroesToView);
+        Disposable disposable = mSuperheroesRepository.getAll()
+                .subscribeOn(mSchedulersFactory.background())
+                .observeOn(mSchedulersFactory.ui())
+                .subscribe(this::presentSuperheroesToView);
     }
 
     private void presentSuperheroesToView(List<Superhero> superheroes) {

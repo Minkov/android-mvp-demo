@@ -8,5 +8,5 @@ public interface Repository<T> {
 
     void add(T entity, Consumer<T> onComplete);
 
-    void getById(String id, Consumer<T> onComplete);
+    void getById(int id, Consumer<T> onComplete);
 }

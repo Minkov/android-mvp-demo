@@ -39,7 +39,7 @@ public class HttpRepository<T> implements Repository<T> {
     }
 
     @Override
-    public void getById(String id, Consumer<T> onComplete) {
+    public void getById(int id, Consumer<T> onComplete) {
 
     }
 }
