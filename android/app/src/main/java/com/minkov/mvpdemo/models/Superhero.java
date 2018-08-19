@@ -1,6 +1,8 @@
 package com.minkov.mvpdemo.models;
 
-public class Superhero {
+import com.minkov.mvpdemo.models.base.EntityBase;
+
+public class Superhero extends EntityBase {
     public String name;
 
     public Superhero() {

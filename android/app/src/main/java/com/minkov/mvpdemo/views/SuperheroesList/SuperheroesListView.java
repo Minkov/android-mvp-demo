@@ -24,7 +24,7 @@ import org.w3c.dom.Text;
 import java.util.List;
 
 public class SuperheroesListView extends Fragment implements
-    SuperheroesListContracts.View, AdapterView.OnItemClickListener, TextWatcherExtensions {
+        SuperheroesListContracts.View, AdapterView.OnItemClickListener, TextWatcherExtensions {
 
     private SuperheroesListContracts.Presenter mPresenter;
     private ListView mSuperheroesListView;
@@ -79,12 +79,13 @@ public class SuperheroesListView extends Fragment implements
 
     @Override
     public void showSuperheroes(List<Superhero> superheroes) {
-        mSuperheroesAdapter.clear();
-        mSuperheroesAdapter.addAll(superheroes);
-        mSuperheroesAdapter.notifyDataSetChanged();
-
-        mSuperheroesListView.setVisibility(View.VISIBLE);
-        mSuperheroesEmptyView.setVisibility(View.GONE);
+        getActivity().runOnUiThread(() -> {
+            mSuperheroesAdapter.clear();
+            mSuperheroesAdapter.addAll(superheroes);
+            mSuperheroesAdapter.notifyDataSetChanged();
+            mSuperheroesListView.setVisibility(View.VISIBLE);
+            mSuperheroesEmptyView.setVisibility(View.GONE);
+        });
     }
 
     @Override
@@ -104,8 +105,10 @@ public class SuperheroesListView extends Fragment implements
 
     @Override
     public void showEmptySuperheroes() {
-        mSuperheroesListView.setVisibility(View.GONE);
-        mSuperheroesEmptyView.setVisibility(View.VISIBLE);
+        getActivity().runOnUiThread(() -> {
+            mSuperheroesListView.setVisibility(View.GONE);
+            mSuperheroesEmptyView.setVisibility(View.VISIBLE);
+        });
     }
 
     @Override

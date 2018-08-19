@@ -6,7 +6,6 @@ import com.minkov.mvpdemo.models.Superhero;
 import com.minkov.mvpdemo.repositories.FirebaseRepository;
 
 public class SuperheroesApplication extends Application {
-
     private FirebaseRepository<Superhero> mSuperheroesRepository;
 
     public FirebaseRepository<Superhero> getSuperheroesRepository() {
@@ -15,5 +14,10 @@ public class SuperheroesApplication extends Application {
         }
 
         return mSuperheroesRepository;
+    }
+
+    public static String geServerUrl() {
+//        return "http://192.168.43.154:8080/api/";
+        return "http://192.168.2.109:8080/api";
     }
 }
