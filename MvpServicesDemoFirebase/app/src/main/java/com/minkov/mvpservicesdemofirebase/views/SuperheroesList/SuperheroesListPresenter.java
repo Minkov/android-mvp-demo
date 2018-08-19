@@ -1,11 +1,9 @@
 package com.minkov.mvpservicesdemofirebase.views.SuperheroesList;
 
 import com.minkov.mvpservicesdemofirebase.models.Superhero;
-import com.minkov.mvpservicesdemofirebase.services.FirebaseSuperheroesService;
 import com.minkov.mvpservicesdemofirebase.services.base.SuperheroesService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SuperheroesListPresenter implements SuperheroesListContracts.Presenter {
     private final SuperheroesService mSuperheroesService;
@@ -37,7 +35,7 @@ public class SuperheroesListPresenter implements SuperheroesListContracts.Presen
 
     private void loadSuperheroes() {
         mView.showLoading();
-        mSuperheroesService.getAll(this::presentSuperheroesToView);
+        mSuperheroesService.getAllSuperheroes(this::presentSuperheroesToView);
 
     }
 

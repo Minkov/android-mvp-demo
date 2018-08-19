@@ -8,8 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -34,7 +32,7 @@ public class SuperheroesListPresenterTests {
             return null;
         })
                 .when(mockSuperheroesService)
-                .getAll(any(Consumer.class));
+                .getAllSuperheroes(any(Consumer.class));
     }
 
     private void mockServiceGetFiltered(List<Superhero> filteredSuperheroes) {

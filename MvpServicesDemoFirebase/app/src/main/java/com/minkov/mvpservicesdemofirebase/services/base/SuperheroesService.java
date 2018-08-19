@@ -8,5 +8,5 @@ import java.util.function.Consumer;
 public interface SuperheroesService {
     void getFilteredSuperheroes(String pattern, Consumer<List<Superhero>> onResult);
 
-    void getAll(Consumer<List<Superhero>> onResult);
+    void getAllSuperheroes(Consumer<List<Superhero>> onResult);
 }
