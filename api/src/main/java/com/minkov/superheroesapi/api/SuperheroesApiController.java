@@ -32,7 +32,6 @@ public class SuperheroesApiController {
         return this.mapper.mapMany(models);
     }
 
-
     @RequestMapping(
         value = "/{id}",
         method = RequestMethod.GET
@@ -42,7 +41,6 @@ public class SuperheroesApiController {
         Superhero model = this.superheroesService.findSuperheroById(id);
         return this.mapper.mapDetails(model);
     }
-
 
     @RequestMapping(
         method = RequestMethod.POST
