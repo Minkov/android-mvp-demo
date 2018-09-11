@@ -4,4 +4,5 @@ public class SuperheroViewModel {
     public String name;
     public String secretIdentity;
     public int id;
+    public String imageUrl;
 }

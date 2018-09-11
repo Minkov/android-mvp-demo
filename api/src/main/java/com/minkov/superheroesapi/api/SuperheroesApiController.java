@@ -9,17 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/superheroes")
+@RequestMapping("/api/superheros")
 public class SuperheroesApiController {
     private final SuperheroesService superheroesService;
     private final SuperheroMapper mapper;
 
     @Autowired
-    public SuperheroesApiController(SuperheroesService superheroesService, SuperheroMapper mapper) {
+    public SuperheroesApiController(
+        SuperheroesService superheroesService,
+        SuperheroMapper mapper) {
         this.superheroesService = superheroesService;
         this.mapper = mapper;
     }
@@ -46,6 +49,14 @@ public class SuperheroesApiController {
         method = RequestMethod.POST
     )
     public ResponseEntity<SuperheroViewModel> createSuperhero(@RequestBody SuperheroViewModel superheroVm) {
+
+        if (superheroVm == null || superheroVm.name == null || superheroVm.secretIdentity == null) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Superhero must have name and secretIdentity"
+            );
+        }
+
         Superhero model = this.mapper.map(superheroVm);
         Superhero superhero = this.superheroesService.create(model);
         SuperheroViewModel vmToReturn = this.mapper.map(superhero);

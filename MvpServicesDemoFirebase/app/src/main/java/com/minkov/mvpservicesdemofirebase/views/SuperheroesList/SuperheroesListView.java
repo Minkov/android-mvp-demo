@@ -2,10 +2,14 @@ package com.minkov.mvpservicesdemofirebase.views.SuperheroesList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -13,16 +17,18 @@ import android.widget.TextView;
 import com.minkov.mvpservicesdemofirebase.R;
 import com.minkov.mvpservicesdemofirebase.models.Superhero;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SuperheroesListView extends Fragment implements
         SuperheroesListContracts.View, AdapterView.OnItemClickListener {
 
     private SuperheroesListContracts.Presenter mPresenter;
-    private ListView mSuperheroesListView;
-    private SuperheroesListViewAdapter mSuperheroesAdapter;
+    private RecyclerView mSuperheroesListView;
+    private SuperheroesListAdapter mSuperheroesAdapter;
     private ProgressBar mLoadingView;
     private TextView mSuperheroesEmptyView;
+    private GridLayoutManager mLayoutManager;
 
     public SuperheroesListView() {
         // Required empty public constructor
@@ -37,11 +43,18 @@ public class SuperheroesListView extends Fragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_superheroes_list_view, container, false);
 
-        mSuperheroesAdapter = new SuperheroesListViewAdapter(getContext());
+        mSuperheroesAdapter = new SuperheroesListAdapter();
 
         mSuperheroesListView = view.findViewById(R.id.lv_superheroes);
+        mSuperheroesListView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new GridLayoutManager(getContext(), 2);
+        mSuperheroesListView.setLayoutManager(mLayoutManager);
         mSuperheroesListView.setAdapter(mSuperheroesAdapter);
-        mSuperheroesListView.setOnItemClickListener(this);
+
+//        mSuperheroesListView.setAdapter(mSuperheroesAdapter);
+//        mSuperheroesListView.setOnItemClickListener(this);
 
         mLoadingView = view.findViewById(R.id.pb_loading);
         mSuperheroesEmptyView = view.findViewById(R.id.tv_nosuperheroes);

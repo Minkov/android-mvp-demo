@@ -17,6 +17,7 @@ public class SuperheroMapperImpl implements SuperheroMapper {
         vm.id = model.getId();
         vm.name = model.getName();
         vm.secretIdentity = model.getSecretIdentity();
+        vm.imageUrl = model.getImageUrl();
         return vm;
     }
 
